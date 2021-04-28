@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.8'
 services:
   main:
     container_name: main
@@ -32,4 +32,4 @@ services:
     ports:
       - 5432:5432
     volumes: 
-      - /data/bp
+      - ./data/bp:/var/lib/postgresql/data
