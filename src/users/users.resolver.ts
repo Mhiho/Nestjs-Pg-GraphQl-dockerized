@@ -1,35 +1,42 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { UsersService } from './users.service';
+import { UseGuards } from '@nestjs/common';
+import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { CurrentUser } from '../auth/current-user.decorator';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { GetUserArgs } from './dto/args/get-user.args';
+import { GetUsersArgs } from './dto/args/get-users.args';
+import { CreateUserInput } from './dto/input/create-user.input';
+import { DeleteUserInput } from './dto/input/delete-user.input';
+import { UpdateUserInput } from './dto/input/update-user.input';
 import { User } from './entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
+import { UsersService } from './users.service';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+    constructor(private readonly usersService: UsersService) {}
 
-  @Mutation(() => User)
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.usersService.create(createUserInput);
-  }
+    @Query(() => User, { name: 'user', nullable: true })
+    @UseGuards(GqlAuthGuard)
+    getUser(@CurrentUser() user: User,  @Args() getUserArgs: GetUserArgs): User {
+        return this.usersService.getUser(getUserArgs);
+    }
 
-  @Query(() => [User], { name: 'users' })
-  findAll() {
-    return this.usersService.findAll();
-  }
+    @Query(() => [User], { name: 'users', nullable: 'items' })
+    getUsers(@Args() getUsersArgs: GetUsersArgs): User[] {
+        return this.usersService.getUsers(getUsersArgs);
+    }
 
-  @Query(() => User, { name: 'user' })
-  findOne(@Args('id') id: string) {
-    return this.usersService.findOne(id);
-  }
+    @Mutation(() => User)
+    createUser(@Args('createUserData') createUserData: CreateUserInput) {
+        return this.usersService.createUser(createUserData);
+    }
 
-  @Mutation(() => User)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.usersService.update(updateUserInput.id, updateUserInput);
-  }
+    @Mutation(() => User)
+    updateUser(@Args('updateUserData') updateUserData: UpdateUserInput) {
+        return this.usersService.updateUser(updateUserData);
+    }
 
-  @Mutation(() => User)
-  removeUser(@Args('id') id: string) {
-    return this.usersService.remove(id);
-  }
+    @Mutation(() => User)
+    deleteUser(@Args('deleteUserData') deleteUserData: DeleteUserInput) {
+        return this.usersService.deleteUser(deleteUserData);
+    }
 }

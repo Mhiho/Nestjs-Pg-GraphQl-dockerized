@@ -3,30 +3,32 @@
 # ------------------------------------------------------
 
 type User {
-  id: ID!
   name: String!
+  email: String!
   description: String!
 }
 
 type Query {
   users: [User!]!
-  user(id: String!): User!
+  user(id: Float!): User!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
-  removeUser(id: String!): User!
+  removeUser(id: Float!): User!
 }
 
 input CreateUserInput {
-  id: ID!
   name: String!
+  email: String!
+  password: String!
   description: String!
 }
 
 input UpdateUserInput {
-  id: ID!
   name: String!
+  email: String!
+  password: String!
   description: String!
 }
