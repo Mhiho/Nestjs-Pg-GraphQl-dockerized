@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
@@ -10,19 +10,20 @@ import { UpdateUserInput } from './dto/input/update-user.input';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
+@Controller()
 @Resolver(() => User)
 export class UsersResolver {
     constructor(private readonly usersService: UsersService) {}
 
     @Query(() => User, { name: 'user', nullable: true })
     @UseGuards(GqlAuthGuard)
-    getUser(@CurrentUser() user: User,  @Args() getUserArgs: GetUserArgs): User {
-        return this.usersService.getUser(getUserArgs);
+    async getUser(@CurrentUser() user: User,  @Args() getUserArgs: GetUserArgs): Promise<User> {
+        return await this.usersService.getUser(getUserArgs.uuid);
     }
 
     @Query(() => [User], { name: 'users', nullable: 'items' })
-    getUsers(@Args() getUsersArgs: GetUsersArgs): User[] {
-        return this.usersService.getUsers(getUsersArgs);
+    async getUsers(): Promise<User[]> {
+        return await this.usersService.getUsers();
     }
 
     @Mutation(() => User)
@@ -37,6 +38,6 @@ export class UsersResolver {
 
     @Mutation(() => User)
     deleteUser(@Args('deleteUserData') deleteUserData: DeleteUserInput) {
-        return this.usersService.deleteUser(deleteUserData);
+        return this.usersService.deleteUser(deleteUserData.uuid);
     }
 }

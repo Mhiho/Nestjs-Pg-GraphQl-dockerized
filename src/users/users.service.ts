@@ -12,6 +12,8 @@ import { createUserResponse } from './create-user-response.interface';
 import { hashPwd } from 'src/utils/hash-pwd';
 import { updateUserResponse } from './update-user-response.interface'; 
 import { UserI } from './uuid-response.interface';
+import { Observable } from 'rxjs';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -21,7 +23,7 @@ export class UsersService {
     const { id, uuid, email, name, age, isAdmin, description } = user;
     return { id, uuid, email, name, age, isAdmin, description };
   }
-  public async createUser(createUserData: CreateUserInput): Promise<createUserResponse> {
+  async createUser(createUserData: CreateUserInput): Promise<createUserResponse> {
     const user: User = new User();
     user.name = createUserData.name;
     user.email = createUserData.email;
@@ -35,34 +37,26 @@ export class UsersService {
     return this.filter(user);
   }
 
-  public async updateUser(updateUserData: UpdateUserInput): Promise<UserI> {
+  async updateUser(updateUserData: UpdateUserInput): Promise<updateUserResponse> {
 
-    const user = await this.userRepository.find((user: { uuid: string; }) => user.uuid === updateUserData.uuid);
-
+    const user = await this.userRepository.findOne(updateUserData.uuid);
     Object.assign(user, updateUserData);
-    await this.userRepository.save(user);
     return this.filter(user);
   }
 
-  public getUser(getUserArgs: GetUserArgs): User {
-    return this.userRepository.find((user: { uuid: string; }) => user.uuid === getUserArgs.uuid);
+  async getUser(uuid: string): Promise<User> {
+    return await this.userRepository.findOne({uuid});
+  }
+  async getUserByEmail(email: string): Promise<any> {
+    return await this.userRepository.findOne({email});
   }
 
-  public async getUserByEmail(email: string): Promise<any> {
-    return await this.userRepository.find((user: { email: string; }) => user.email === email);
+  async getUsers(): Promise<User[]> {
+    return await this.userRepository.find()
   }
 
-  public getUsers(getUsersArgs: GetUsersArgs): User[] {
-    return getUsersArgs.uuids.map(uuid => this.getUser({ uuid }));
-  }
-
-  public deleteUser(deleteUserData: DeleteUserInput): Promise<User[]> {
-    const userIndex = this.userRepository.findIndex((user: { uuid: string; }) => user.uuid === deleteUserData.uuid);
-
-    const user = this.userRepository[userIndex];
-
-    this.userRepository.splice(userIndex);
-
-    return user;
+  async deleteUser(uuid: string): Promise<string> {
+    await this.userRepository.delete(uuid);
+    return `user with uuid ${uuid} deleted`;
   }
 }
