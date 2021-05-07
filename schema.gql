@@ -13,6 +13,7 @@ type User {
 type Query {
   user(uuid: String!): User
   users: [User]!
+  whoAmI: User!
 }
 
 type Mutation {
