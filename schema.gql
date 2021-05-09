@@ -7,7 +7,6 @@ type User {
   email: String!
   description: String!
   age: Int!
-  isAdmin: Boolean
 }
 
 type Query {
@@ -17,18 +16,10 @@ type Query {
 }
 
 type Mutation {
-  createUser(createUserData: CreateUserInput!): User!
   updateUser(updateUserData: UpdateUserInput!): User!
   deleteUser(deleteUserData: DeleteUserInput!): User!
-}
-
-input CreateUserInput {
-  email: String!
-  name: String!
-  password: String!
-  description: String!
-  isAdmin: Boolean
-  age: Float!
+  login(input: LoginUserInput!): User!
+  signUp(signUpData: SignUpInputDto!): User!
 }
 
 input UpdateUserInput {
@@ -37,9 +28,21 @@ input UpdateUserInput {
   name: String!
   password: String!
   description: String!
-  isAdmin: Boolean
 }
 
 input DeleteUserInput {
   uuid: String!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input SignUpInputDto {
+  email: String!
+  name: String!
+  password: String!
+  description: String!
+  age: Float!
 }

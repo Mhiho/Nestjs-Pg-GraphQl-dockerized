@@ -6,6 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guards/roles.guard';
+import * as bodyParser from 'body-parser';
+import { GRAPHQL_GATEWAY_MODULE_OPTIONS } from '@nestjs/graphql/dist/federation/federation.constants';
+import { GraphqlOptions } from './granphql.options';
 
 @Module({
   imports: [
@@ -29,6 +34,10 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: RolesGuard,
+  },
+  ]
 })
-export class AppModule {}
+export class AppModule { }

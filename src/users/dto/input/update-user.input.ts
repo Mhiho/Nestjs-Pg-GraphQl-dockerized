@@ -29,7 +29,4 @@ export class UpdateUserInput {
     @Column({ length: 320, nullable: true, type: 'varchar' })
     description: string;
   
-    @Field({ nullable: true })
-    @Column()
-    isAdmin?: boolean;
 }

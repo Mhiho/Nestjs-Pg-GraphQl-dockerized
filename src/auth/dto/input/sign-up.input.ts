@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Column } from 'typeorm';
 
 @InputType()
-export class CreateUserInput {
+export class SignUpInputDto {
     @Field()
     @IsNotEmpty()
     @IsEmail()
@@ -26,9 +26,6 @@ export class CreateUserInput {
     @Field()
     @Column({ length: 320, nullable: true, type: 'varchar' })
     description: string;
-  
-    @Field({ nullable: true })
-    isAdmin?: boolean;
 
     @Field()
     @IsNotEmpty()

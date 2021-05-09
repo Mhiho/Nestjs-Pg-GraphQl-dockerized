@@ -1,23 +1,27 @@
 import { Controller, UseGuards } from '@nestjs/common';
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
-import { CurrentUser } from '../auth/current-user.decorator';
+import { CurrentUser } from '../decorators/current-user.decorator';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { GetUserArgs } from './dto/args/get-user.args';
 import { GetUsersArgs } from './dto/args/get-users.args';
-import { CreateUserInput } from './dto/input/create-user.input';
 import { DeleteUserInput } from './dto/input/delete-user.input';
 import { UpdateUserInput } from './dto/input/update-user.input';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/auth/roles/role.enum';
+import { LoginUserInput } from './dto/input/login-user.input';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller()
 @Resolver(() => User)
 export class UsersResolver {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(private readonly usersService: UsersService,
+    ) { }
 
     @Query(() => User, { name: 'user', nullable: true })
     @UseGuards(GqlAuthGuard)
-    async getUser(@CurrentUser() user: User,  @Args() getUserArgs: GetUserArgs): Promise<User> {
+    async getUser(@CurrentUser() user: User, @Args() getUserArgs: GetUserArgs): Promise<User> {
         return await this.usersService.getUser(getUserArgs.uuid);
     }
 
@@ -29,12 +33,7 @@ export class UsersResolver {
     @Query(returns => User)
     @UseGuards(GqlAuthGuard)
     whoAmI(@CurrentUser() user: User) {
-      return this.usersService.getUser(user.uuid);
-    }
-
-    @Mutation(() => User)
-    createUser(@Args('createUserData') createUserData: CreateUserInput) {
-        return this.usersService.createUser(createUserData);
+        return this.usersService.getUser(user.uuid);
     }
 
     @Mutation(() => User)
@@ -42,6 +41,7 @@ export class UsersResolver {
         return this.usersService.updateUser(updateUserData);
     }
 
+    @Roles(Role.Admin)
     @Mutation(() => User)
     deleteUser(@Args('deleteUserData') deleteUserData: DeleteUserInput) {
         return this.usersService.deleteUser(deleteUserData.uuid);

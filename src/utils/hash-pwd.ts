@@ -1,9 +1,8 @@
-import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 
-const salt = crypto.randomBytes(60);
 
-export const hashPwd = (p: string): string => {
-    const hmac = crypto.createHmac('sha512', salt)
-    hmac.update(p);
-    return hmac.digest('hex');
+export const hash = async (p: string): Promise<string> => {
+    const salt = await bcrypt.genSalt();
+    const hashed = await bcrypt.hash(p, salt);
+    return hashed;
 }

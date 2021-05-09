@@ -1,10 +1,9 @@
-export interface createUserResponse {
+export interface signUpResponse {
   id: number;
   uuid: string;
   email: string;
   name: string;
   age: number;
-  isAdmin: boolean;
   description: string;
 }
 

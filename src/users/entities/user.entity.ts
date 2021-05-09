@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
+import { Role } from 'src/auth/roles/role.enum';
 import { Entity, Column, PrimaryGeneratedColumn, Generated } from 'typeorm';
 
 @ObjectType()
@@ -32,6 +33,6 @@ export class User {
   @Field(() => Int)
   age: number;
 
-  @Field({ nullable: true })
-  isAdmin?: boolean;
+  @Column({type: 'varchar', array: true, nullable: true})
+  roles: Role[]
 }
