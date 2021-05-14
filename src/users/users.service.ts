@@ -9,6 +9,7 @@ import { updateUserResponse } from './update-user-response.interface';
 import { LoginUserInput } from './dto/input/login-user.input';
 import * as bcrypt from 'bcrypt';
 import { signUpResponse } from './sign-up-response.interface';
+import { UserI } from './user.interface';
 
 @Injectable()
 export class UsersService {
@@ -43,8 +44,8 @@ export class UsersService {
   // }
 
 
-  async getUser(uuid: string): Promise<User> {
-    return await this.userRepository.findOne({ uuid });
+  async getUser(email: string): Promise<User> {
+    return await this.userRepository.findOne({ email });
   }
   async getUserByEmail(email: string): Promise<any> {
     return await this.userRepository.findOne({ email });
@@ -58,4 +59,5 @@ export class UsersService {
     await this.userRepository.delete(uuid);
     return `user with uuid ${uuid} deleted`;
   }
+
 }

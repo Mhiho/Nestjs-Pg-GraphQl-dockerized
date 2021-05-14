@@ -35,4 +35,8 @@ export class User {
 
   @Column({type: 'varchar', array: true, nullable: true})
   roles: Role[]
+
+  @Column({ type: 'varchar', nullable: true })
+  currentTokenId: string;
+
 }

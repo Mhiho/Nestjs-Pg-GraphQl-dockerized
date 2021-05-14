@@ -7,6 +7,7 @@ export class SignUpInputDto {
     @Field()
     @IsNotEmpty()
     @IsEmail()
+    @Column({ nullable: false, type: 'varchar' })
     email: string;
 
     @Field()
